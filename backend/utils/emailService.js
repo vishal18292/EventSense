@@ -12,15 +12,20 @@ const createTransporter = () => {
     const transport = nodemailer.createTransport ? nodemailer : nodemailer.default;
 
     return transport.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // Use TLS
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASS,
         },
-        // Add timeouts to prevent hanging
-        connectionTimeout: 10000, // 10 seconds
-        greetingTimeout: 10000,
-        socketTimeout: 10000,
+        tls: {
+            rejectUnauthorized: false
+        },
+        // Increase timeouts for Render
+        connectionTimeout: 60000, // 60 seconds
+        greetingTimeout: 30000,
+        socketTimeout: 60000,
     });
 };
 
