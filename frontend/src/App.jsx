@@ -25,9 +25,12 @@ import MyEvents from './pages/organizer/MyEvents';
 import AdminDashboard from './pages/admin/Dashboard';
 import ApproveEvents from './pages/admin/ApproveEvents';
 
+import ScrollToTop from './components/common/ScrollToTop';
+
 function App() {
     return (
         <Router>
+            <ScrollToTop />
             <div className="flex flex-col min-h-screen">
                 <Navbar />
                 <main className="flex-grow">

@@ -91,7 +91,8 @@ const eventSchema = new mongoose.Schema(
 );
 
 // Set availableSeats to totalSeats before saving if not set
-eventSchema.pre('save', function (next) {
+// Set availableSeats to totalSeats before validating if not set
+eventSchema.pre('validate', function (next) {
     if (this.isNew && !this.availableSeats) {
         this.availableSeats = this.totalSeats;
     }
