@@ -216,6 +216,26 @@ The app sends emails for:
 
 Configure SMTP settings in `.env` for email functionality.
 
+## 🌐 Deployment
+
+EventSense can be deployed with:
+- **Backend**: Render (free tier available)
+- **Frontend**: Vercel (free tier available)
+
+### Quick Deploy
+
+1. **Backend to Render**:
+   - Connect your GitHub repository
+   - Set root directory to `backend`
+   - Add environment variables (see [DEPLOYMENT.md](DEPLOYMENT.md))
+
+2. **Frontend to Vercel**:
+   - Connect your GitHub repository
+   - Set root directory to `frontend`
+   - Add `VITE_API_URL` environment variable
+
+📖 **For detailed step-by-step deployment instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)**
+
 ## 🎯 Future Enhancements
 
 - Payment gateway integration
