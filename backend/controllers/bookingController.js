@@ -71,41 +71,36 @@ export const createBooking = async (req, res) => {
         await booking.populate('user', 'name email');
         await booking.populate('event');
 
-        // Send confirmation email (Fire and forget, don't block response)
-        try {
-            const ticketUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/user/bookings/${booking._id}`;
+        // Send confirmation email (Fire and forget - don't block response)
+        const ticketUrl = `${process.env.CLIENT_URL || 'http://localhost:5173'}/user/bookings/${booking._id}`;
 
-            // qrCodeData is a Data URL (data:image/png;base64,...). 
-            // We can pass it directly to nodemailer attachment with 'path' property
+        const emailData = {
+            email: req.user.email,
+            subject: 'Booking Confirmation - EventSense',
+            html: bookingConfirmationTemplate({
+                userName: req.user.name,
+                bookingReference,
+                eventTitle: event.title,
+                eventDate: new Date(event.date).toDateString(),
+                eventTime: event.time,
+                venue: event.venue,
+                seats,
+                totalAmount,
+                ticketUrl,
+            }),
+            attachments: [
+                {
+                    filename: 'qrcode.png',
+                    path: qrCodeData,
+                    cid: 'qrcode'
+                }
+            ]
+        };
 
-            const emailData = {
-                email: req.user.email,
-                subject: 'Booking Confirmation - EventSense',
-                html: bookingConfirmationTemplate({
-                    userName: req.user.name,
-                    bookingReference,
-                    eventTitle: event.title,
-                    eventDate: new Date(event.date).toDateString(),
-                    eventTime: event.time,
-                    venue: event.venue,
-                    seats,
-                    totalAmount,
-                    ticketUrl, // Pass dynamic URL
-                }),
-                attachments: [
-                    {
-                        filename: 'qrcode.png',
-                        path: qrCodeData, // Nodemailer supports data URI here
-                        cid: 'qrcode' // Same cid value as in the html img src
-                    }
-                ]
-            };
-
-            await sendEmail(emailData);
-        } catch (emailError) {
+        // Fire and forget - don't await
+        sendEmail(emailData).catch(emailError => {
             console.error('Failed to send booking confirmation email:', emailError);
-            // Continue without failing the request
-        }
+        });
 
         res.status(201).json({
             success: true,
